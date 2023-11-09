@@ -187,7 +187,7 @@ object MainForm: TMainForm
     Top = 500
     Width = 1285
     Height = 169
-    ActivePage = tsConsole
+    ActivePage = LogSheet
     Align = alBottom
     Images = dmMain.MenuImages_NewLook
     MultiLine = True
@@ -302,23 +302,53 @@ object MainForm: TMainForm
           Height = 30
           Action = actAbortCompilation
         end
+        object btnClearCompilerLog: TSpeedButton
+          Left = 123
+          Top = 101
+          Width = 25
+          Height = 25
+          Hint = 'Clear Log'
+          Caption = 'x'
+          OnClick = btnClearCompilerLogClick
+        end
+        object btnManualScan: TSpeedButton
+          Left = 4
+          Top = 101
+          Width = 45
+          Height = 25
+          Hint = 'ScanActiveProject'
+          Caption = 'Scan'
+          OnClick = btnManualScanClick
+        end
         object pbCompilation: TProgressBar
           Left = 4
           Top = 40
           Width = 144
-          Height = 24
+          Height = 9
           Anchors = [akLeft, akTop, akRight]
           Step = 1
           TabOrder = 0
         end
         object chkShortenPaths: TCheckBox
           Left = 4
-          Top = 69
+          Top = 55
           Width = 144
           Height = 17
           Action = actShortenCompPaths
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
+        end
+        object chkShowScanLogInCompileLog: TCheckBox
+          Left = 4
+          Top = 81
+          Width = 144
+          Height = 17
+          Anchors = [akLeft, akTop, akRight]
+          Caption = 'Show Scan log here'
+          Checked = True
+          State = cbChecked
+          TabOrder = 2
+          OnClick = chkShowScanLogInCompileLogClick
         end
       end
       object CompResGroupBox: TPanel
@@ -341,7 +371,6 @@ object MainForm: TMainForm
           Font.Name = 'Courier New'
           Font.Style = []
           ParentFont = False
-          ReadOnly = True
           ScrollBars = ssBoth
           TabOrder = 0
           WantTabs = True
@@ -385,7 +414,6 @@ object MainForm: TMainForm
           Width = 681
           Height = 98
           Anchors = [akLeft, akTop, akRight, akBottom]
-          ReadOnly = True
           ScrollBars = ssVertical
           TabOrder = 1
         end
@@ -657,7 +685,7 @@ object MainForm: TMainForm
     OnClick = ToolbarDockClick
     OnContextPopup = ToolbarDockContextPopup
     object tbMain: TToolBar
-      Left = 11
+      Left = 14
       Top = 2
       Width = 211
       Height = 24
@@ -720,7 +748,7 @@ object MainForm: TMainForm
       end
     end
     object tbCompile: TToolBar
-      Left = 677
+      Left = 426
       Top = 2
       Width = 256
       Height = 24
@@ -803,7 +831,7 @@ object MainForm: TMainForm
       end
     end
     object tbProject: TToolBar
-      Left = 569
+      Left = 315
       Top = 2
       Width = 95
       Height = 24
@@ -844,7 +872,7 @@ object MainForm: TMainForm
       end
     end
     object tbEdit: TToolBar
-      Left = 235
+      Left = 241
       Top = 2
       Width = 58
       Height = 24
@@ -872,7 +900,7 @@ object MainForm: TMainForm
       end
     end
     object tbSearch: TToolBar
-      Left = 946
+      Left = 964
       Top = 2
       Width = 124
       Height = 24
@@ -918,7 +946,7 @@ object MainForm: TMainForm
       end
     end
     object tbSpecials: TToolBar
-      Left = 11
+      Left = 14
       Top = 30
       Width = 87
       Height = 24
@@ -952,7 +980,7 @@ object MainForm: TMainForm
       end
     end
     object tbClasses: TToolBar
-      Left = 111
+      Left = 117
       Top = 30
       Width = 700
       Height = 24
@@ -994,7 +1022,7 @@ object MainForm: TMainForm
       end
     end
     object tbCompilers: TToolBar
-      Left = 306
+      Left = 698
       Top = 2
       Width = 250
       Height = 24
@@ -1104,7 +1132,7 @@ object MainForm: TMainForm
         Align = alClient
         Images = dmMain.ClassImages
         ReadOnly = True
-        Indent = 0
+        Indent = 21
         TabOrder = 0
         PopupMenu = BrowserPopup
         BorderStyle = bsNone
@@ -1654,9 +1682,9 @@ object MainForm: TMainForm
         object LabelNumVersion: TLabel
           Left = 259
           Top = 309
-          Width = 17
+          Width = 27
           Height = 19
-          Caption = '6.3'
+          Caption = '6.3.1'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clRed
           Font.Height = -13
@@ -1793,9 +1821,8 @@ object MainForm: TMainForm
           AlignWithMargins = True
           Left = 4
           Top = -1985
-          Width = 537
-          Height = 2420
-          Align = alBottom
+          Width = 477
+          Height = 2371
           ParentShowHint = False
           Picture.Data = {
             0954506E67496D61676589504E470D0A1A0A0000000D4948445200000A1E0000
@@ -4312,8 +4339,6 @@ object MainForm: TMainForm
             E80000000049454E44AE426082}
           Proportional = True
           ShowHint = False
-          ExplicitLeft = 2
-          ExplicitTop = -1984
         end
         object ImageEmbarcadero: TVirtualImage
           Left = 22
@@ -4438,6 +4463,7 @@ object MainForm: TMainForm
           Top = 339
           Width = 444
           Height = 41
+          Caption = 'clr'
           Visible = False
           OnClick = SpeedButton1Click
           OnDblClick = SpeedButton1DblClick
@@ -6501,8 +6527,8 @@ object MainForm: TMainForm
     end
   end
   object MessagePopup: TPopupMenu
-    Left = 11
-    Top = 323
+    Left = 43
+    Top = 227
     object actMsgCut1: TMenuItem
       Action = actMsgCut
     end
@@ -6540,8 +6566,8 @@ object MainForm: TMainForm
     ParseGlobalHeaders = False
     OnStartParsing = CppParserStartParsing
     OnEndParsing = CppParserEndParsing
-    Left = 60
-    Top = 196
+    Left = 260
+    Top = 308
   end
   object CodeCompletion: TCodeCompletion
     ShowCount = 100
@@ -6556,8 +6582,8 @@ object MainForm: TMainForm
     MaxHeight = 0
     OnResize = CodeCompletionResize
     OnlyGlobals = False
-    Left = 60
-    Top = 228
+    Left = 132
+    Top = 172
   end
   object Shortcuts: TdevShortcuts
     Filename = 'shortcuts.ini'
@@ -6644,12 +6670,12 @@ object MainForm: TMainForm
     Top = 248
   end
   object CppPreprocessor: TCppPreprocessor
-    Left = 60
-    Top = 134
+    Left = 260
+    Top = 158
   end
   object CppTokenizer: TCppTokenizer
-    Left = 60
-    Top = 166
+    Left = 268
+    Top = 230
   end
   object FolderPopup: TPopupMenu
     Images = dmMain.MenuImages_NewLook

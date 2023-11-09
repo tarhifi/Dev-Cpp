@@ -609,6 +609,9 @@ type
     actAStyleFormatOptions: TAction;
     actClangFormatCurrentFile: TAction;
     actClangFormatOptions: TAction;
+    btnClearCompilerLog: TSpeedButton;
+    btnManualScan: TSpeedButton;
+    chkShowScanLogInCompileLog: TCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormDestroy(Sender: TObject);
     procedure ToggleBookmarkClick(Sender: TObject);
@@ -897,7 +900,11 @@ type
     procedure actClangFormatCurrentFileExecute(Sender: TObject);
     procedure actAStyleFormatOptionsExecute(Sender: TObject);
     procedure actClangFormatOptionsExecute(Sender: TObject);
+    procedure btnManualScanClick(Sender: TObject);
+    procedure btnClearCompilerLogClick(Sender: TObject);
+    procedure chkShowScanLogInCompileLogClick(Sender: TObject);
   private
+    fDoLogParserActions: boolean; // write parsed cpp filenames to some memo
     FCloseButtonMouseDownTab: TCloseTabSheet;
     FCloseButtonShowPushed: Boolean;
 
@@ -1070,6 +1077,7 @@ begin
     LoadStyle;
   //end;
 end;
+
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -1680,6 +1688,7 @@ begin
       CheckForDLLProfiling;
       UpdateAppTitle;
       UpdateCompilerList;
+    fDoLogParserActions := true; //FIXME by some checkbox somewhere?
       ScanActiveProject;
       MainPanel.Visible := False;
     end else begin
@@ -2676,7 +2685,7 @@ var
   I: integer;
   e1, e2: TEditor;
 begin
-  with TEditorOptForm.Create(nil) do try
+  with TEditorOptForm.Create(nil) do try    //FIXME Landing here: range check Property Bands does not exist
     ShowModal;
     //if ShowModal = mrOk then begin
 
@@ -3334,7 +3343,7 @@ procedure TMainForm.actDebugExecute(Sender: TObject);
 var
   e: TEditor;
   i: integer;
-  filepath: String;
+  filepath, gdbStarter, gdbPath: String;
   DebugEnabled, StripEnabled: boolean;
 begin
   case GetCompileTarget of
@@ -3379,20 +3388,23 @@ begin
         PrepareDebugger;
 
         filepath := fProject.Executable;
+        gdbPath := '"' + StringReplace(filepath, '\', '/', [rfReplaceAll]) + '"';
 
         fDebugger.Start;
-        fDebugger.SendCommand('file', '"' + StringReplace(filepath, '\', '/', [rfReplaceAll]) + '"');
+        fDebugger.SendCommand('file', gdbPath);
 
         if fProject.Options.typ = dptDyn then
-          fDebugger.SendCommand('exec-file', '"' + StringReplace(fProject.Options.HostApplication, '\', '/',
-            [rfReplaceAll])
-            + '"');
+        begin
+          gdbPath := '"' + StringReplace(fProject.Options.HostApplication, '\', '/',
+            [rfReplaceAll]) + '"';
+          fDebugger.SendCommand('exec-file', gdbPath);
+        end;
       end;
     ctFile: begin
         // Check if we enabled proper options
         with devCompilerSets.CompilationSet do begin
-          DebugEnabled := GetOption('-g3') <> 0;
-          StripEnabled := GetOption('-s') <> 0;
+          DebugEnabled := GetOption('-g3') <> 0;      // FIXME ! compiler specific
+          StripEnabled := GetOption('-s') <> 0;       // FIXME ! compiler specific
         end;
 
         // Ask the user if he wants to enable debugging...
@@ -3401,8 +3413,8 @@ begin
 
           // Enable debugging, disable stripping
           with devCompilerSets.CompilationSet do begin
-            SetOption('-g3', 1);
-            SetOption('-s', 0);
+            SetOption('-g3', 1);    // FIXME ! compiler specific
+            SetOption('-s', 0);     // FIXME ! compiler specific
           end;
 
           // Save changes to compiler set
@@ -3433,9 +3445,10 @@ begin
           PrepareDebugger;
 
           filepath := ChangeFileExt(e.FileName, EXE_EXT);
+          gdbPath := '"' + StringReplace(filepath, '\', '/', [rfReplaceAll]) + '"';
 
           fDebugger.Start;
-          fDebugger.SendCommand('file', '"' + StringReplace(filepath, '\', '/', [rfReplaceAll]) + '"');
+          fDebugger.SendCommand('file', gdbPath);
         end;
       end;
     ctNone: Exit;
@@ -3444,36 +3457,51 @@ begin
   // Add library folders
   with devCompilerSets.CompilationSet do begin
     for I := 0 to LibDir.Count - 1 do
-      fDebugger.SendCommand('dir', '"' + StringReplace(LibDir[i], '\', '/', [rfReplaceAll]) + '"');
-
+    begin
+      gdbPath := '"' + StringReplace(LibDir[i], '\', '/', [rfReplaceAll]) + '"';
+      fDebugger.SendCommand('dir', gdbPath);
+    end;
     // Add include folders
     for I := 0 to CDir.Count - 1 do
-      fDebugger.SendCommand('dir', '"' + StringReplace(CDir[i], '\', '/', [rfReplaceAll]) + '"');
+    begin
+      gdbPath := '"' + StringReplace(CDir[i], '\', '/', [rfReplaceAll]) + '"';
+      fDebugger.SendCommand('dir', gdbPath);
+    end;
 
-    // Add more include folders, duplicates will be added/moved to front of list
+    // FIXME ! really? how?-> Add more include folders, duplicates will be added/moved to front of list
     for I := 0 to CppDir.Count - 1 do
-      fDebugger.SendCommand('dir', '"' + StringReplace(CppDir[i], '\', '/', [rfReplaceAll]) + '"');
+    begin
+      gdbPath := '"' + StringReplace(CppDir[i], '\', '/', [rfReplaceAll]) + '"';
+      fDebugger.SendCommand('dir', gdbPath);
+    end;
   end;
 
   // Add breakpoints and watch vars
   for i := 0 to fDebugger.WatchVarList.Count - 1 do
     fDebugger.AddWatchVar(i);
 
+  fDebugger.GdbNumZeroToAllBreakpoints;
   for i := 0 to fDebugger.BreakPointList.Count - 1 do
-    fDebugger.AddBreakpoint(i);
+    fDebugger.SendBreakpoint(i);
 
   // Run the debugger
   fDebugger.SendCommand('set', 'width 0'); // don't wrap output, very annoying
   fDebugger.SendCommand('set', 'new-console on');
   fDebugger.SendCommand('set', 'confirm off');
   fDebugger.SendCommand('cd', ExtractFileDir(filepath)); // restore working directory
+
+  // github.com/Embarcadero/Dev-Cpp/issues/189
+  if fDebugger.BreakPointList.Count > 0 then
+    gdbStarter := 'run'     // an old Orwell way to rush to some breakpoint, if lucky ;-)
+  else
+    gdbStarter := 'start';  // run to the first executable statement and pause
   case GetCompileTarget of
     ctNone:
       Exit;
     ctFile:
-      fDebugger.SendCommand('run', fCompiler.RunParams);
+      fDebugger.SendCommand(gdbStarter, fCompiler.RunParams);
     ctProject:
-      fDebugger.SendCommand('run', fProject.Options.CmdLineArgs);
+      fDebugger.SendCommand(gdbStarter, fProject.Options.CmdLineArgs);
   end;
 end;
 
@@ -3705,6 +3733,16 @@ end;
 procedure TMainForm.SpeedButton4DblClick(Sender: TObject);
 begin
         Exit;
+end;
+
+procedure TMainForm.btnClearCompilerLogClick(Sender: TObject);
+begin
+    LogOutput.Clear;
+end;
+
+procedure TMainForm.btnManualScanClick(Sender: TObject);
+begin
+  ScanActiveProject;
 end;
 
 procedure TMainForm.SplitterBottomMoved(Sender: TObject);
@@ -4131,6 +4169,9 @@ end;
 
 procedure TMainForm.actStopExecuteExecute(Sender: TObject);
 begin
+  if not Assigned(fDebugger) then
+    Exit;
+
   if fDebugger.Executing then
     fDebugger.Stop
   else if devExecutor.Running then
@@ -5218,6 +5259,11 @@ begin
   end;
 end;
 
+procedure TMainForm.chkShowScanLogInCompileLogClick(Sender: TObject);
+begin
+  Self.fDoLogParserActions := chkShowScanLogInCompileLog.checked ;
+end;
+
 procedure TMainForm.actExecParamsExecute(Sender: TObject);
 begin
   with TParamsForm.Create(self) do try
@@ -5301,12 +5347,18 @@ begin
   end;
 
   fParseStartTime := GetTickCount;
+  if fDoLogParserActions then
+    LogOutput.Lines.Append('CppParserStartParsing');
 end;
 
 procedure TMainForm.CppParserTotalProgress(Sender: TObject; const FileName: string; Total, Current: Integer);
 var
   ShowStep: Integer;
 begin
+
+  if fDoLogParserActions then
+    LogOutput.Lines.Append('Parsing ' + IntToStr(Current) + ': ' + FileName);
+
   // Mention every 5% progress
   ShowStep := Total div 20;
 
@@ -5326,7 +5378,8 @@ var
   ParseTimeFloat, ParsingFrequency: Extended;
 begin
   Screen.Cursor := crDefault;
-
+  if fDoLogParserActions then
+    LogOutput.Lines.Append('CppParserEndParsing: ' + IntToStr(Total));
   // Done. Rebuild stuff that uses the database
   RebuildClassesToolbar;
 
