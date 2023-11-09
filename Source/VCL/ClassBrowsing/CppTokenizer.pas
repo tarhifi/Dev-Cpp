@@ -692,8 +692,12 @@ var
       Head := Index;
       while (Head > 0) and (Output[Head] in BlankChars) do
         Dec(Head);
-      if (Head - 1 > 0) and (Output[Head + 1] in BlankChars) then begin
-        Delete(Output, Head, Index - Head);
+
+      // FIXME ok: a)range check error on Head+1>Length  b)Delete(,,count = 0)
+      if (Head > 0) and (Head < Index)
+        and (Output[Head + 1] in BlankChars) then
+      begin
+        Delete(Output, Head, Index - Head);  // var s, index, count
         // update insert index due to removal
         Dec(InsertIndex, Index - Head);
       end;

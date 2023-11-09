@@ -805,7 +805,7 @@ var
         while (Tail >= 0) and (Line[Tail] in SpaceChars) do
           Dec(Tail); // skip spaces
         Head := Tail;
-        while (Head >= 0) and (Line[Head] in IdentChars) do
+        while (Head > 0) and (Line[Head] in IdentChars) do    // FIXME >= dropped here by range check error
           Dec(Head); // step over identifier
         LeftOp := Copy(Line, Head + 1, Tail - Head);
         EquatStart := Head + 1; // marks begin of equation
