@@ -1,11 +1,14 @@
 object CompOptForm: TCompOptForm
   Left = 1053
   Top = 848
-  BorderStyle = bsDialog
+  BorderStyle = bsSizeToolWin
   Caption = 'Compiler options'
-  ClientHeight = 512
-  ClientWidth = 484
+  ClientHeight = 513
+  ClientWidth = 482
   Color = clWindow
+  Constraints.MaxHeight = 560
+  Constraints.MinHeight = 560
+  Constraints.MinWidth = 500
   Ctl3D = False
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,13 +22,13 @@ object CompOptForm: TCompOptForm
   OnCreate = FormCreate
   OnShow = InterfaceSave
   DesignSize = (
-    484
-    512)
+    482
+    513)
   PixelsPerInch = 96
   TextHeight = 15
   object btnOk: TBitBtn
     Left = 210
-    Top = 480
+    Top = 481
     Width = 85
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -34,10 +37,11 @@ object CompOptForm: TCompOptForm
     ModalResult = 1
     TabOrder = 1
     OnClick = btnOkClick
+    ExplicitTop = 480
   end
   object btnCancel: TBitBtn
     Left = 300
-    Top = 480
+    Top = 481
     Width = 85
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -47,10 +51,11 @@ object CompOptForm: TCompOptForm
     ModalResult = 2
     TabOrder = 2
     OnClick = btnCancelClick
+    ExplicitTop = 480
   end
   object btnHelp: TBitBtn
     Left = 390
-    Top = 480
+    Top = 481
     Width = 85
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -58,28 +63,28 @@ object CompOptForm: TCompOptForm
     Enabled = False
     TabOrder = 3
     OnClick = btnHelpClick
+    ExplicitTop = 480
   end
   object MainPages: TPageControl
     Tag = 2
     Left = 0
     Top = 70
-    Width = 484
+    Width = 478
     Height = 405
     ActivePage = tabCompiler
+    Anchors = [akLeft, akTop, akRight]
     TabOrder = 0
+    ExplicitWidth = 484
     object tabCompiler: TTabSheet
       Caption = 'General'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 476
       DesignSize = (
-        476
+        470
         375)
       object cbCompAdd: TCheckBox
         Left = 10
         Top = 6
-        Width = 450
+        Width = 444
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Add the following commands when calling the compiler:'
@@ -87,13 +92,14 @@ object CompOptForm: TCompOptForm
         ParentCtl3D = False
         TabOrder = 0
         OnClick = cbCompAddClick
+        ExplicitWidth = 450
       end
       object Commands: TMemo
-        Left = 22
+        Left = 19
         Top = 32
         Width = 443
         Height = 150
-        Anchors = []
+        Anchors = [akLeft, akRight]
         Ctl3D = False
         ParentCtl3D = False
         ScrollBars = ssVertical
@@ -104,7 +110,7 @@ object CompOptForm: TCompOptForm
       object cbLinkerAdd: TCheckBox
         Left = 10
         Top = 186
-        Width = 450
+        Width = 444
         Height = 17
         Anchors = [akLeft, akTop, akRight]
         Caption = 'Add these commands to the linker command line'
@@ -112,13 +118,14 @@ object CompOptForm: TCompOptForm
         ParentCtl3D = False
         TabOrder = 2
         OnClick = cbLinkerAddClick
+        ExplicitWidth = 450
       end
       object Linker: TMemo
-        Left = 22
+        Left = 19
         Top = 212
         Width = 443
         Height = 150
-        Anchors = []
+        Anchors = [akLeft, akRight]
         Ctl3D = False
         ParentCtl3D = False
         ScrollBars = ssVertical
@@ -129,6 +136,7 @@ object CompOptForm: TCompOptForm
     end
     object tabCodeGen: TTabSheet
       Caption = 'Settings'
+      ExplicitWidth = 476
       object OptionsTip: TLabel
         Left = 0
         Top = 336
@@ -175,7 +183,7 @@ object CompOptForm: TCompOptForm
           inherited vle: TCompOptionsList
             Width = 468
             Height = 323
-            ExplicitWidth = 468
+            ExplicitWidth = 410
             ExplicitHeight = 323
           end
         end
@@ -183,14 +191,11 @@ object CompOptForm: TCompOptForm
     end
     object tabDirectories: TTabSheet
       Caption = 'Directories'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 476
       object DirTabs: TTabControl
         Left = 0
         Top = 0
-        Width = 476
+        Width = 470
         Height = 375
         Align = alClient
         TabOrder = 0
@@ -201,11 +206,12 @@ object CompOptForm: TCompOptForm
           'C++ Includes')
         TabIndex = 0
         OnChange = DirTabsChange
+        ExplicitWidth = 476
         DesignSize = (
-          476
+          470
           375)
         object btnUp: TSpeedButton
-          Left = 445
+          Left = 439
           Top = 140
           Width = 23
           Height = 22
@@ -216,9 +222,10 @@ object CompOptForm: TCompOptForm
           Enabled = False
           Flat = True
           OnClick = UpDownClick
+          ExplicitLeft = 445
         end
         object btnDown: TSpeedButton
-          Left = 445
+          Left = 439
           Top = 170
           Width = 23
           Height = 22
@@ -229,12 +236,14 @@ object CompOptForm: TCompOptForm
           Enabled = False
           Flat = True
           OnClick = UpDownClick
+          ExplicitLeft = 445
         end
         object btnBrowse: TSpeedButton
-          Left = 445
+          Left = 442
           Top = 310
           Width = 23
           Height = 22
+          Anchors = [akTop, akRight]
           ImageIndex = 59
           ImageName = 'iconsnew-65'
           Images = dmMain.SVGImageListMenuStyle
@@ -244,8 +253,9 @@ object CompOptForm: TCompOptForm
         object lstDirs: TListBox
           Left = 4
           Top = 26
-          Width = 435
+          Width = 425
           Height = 280
+          Anchors = [akLeft, akTop, akRight]
           Ctl3D = False
           ItemHeight = 15
           ParentCtl3D = False
@@ -253,11 +263,12 @@ object CompOptForm: TCompOptForm
           TabOrder = 0
           OnClick = lstDirsClick
           OnDblClick = lstDirsDblClick
+          ExplicitWidth = 435
         end
         object edEntry: TEdit
           Left = 4
           Top = 310
-          Width = 435
+          Width = 429
           Height = 21
           Anchors = [akLeft, akRight, akBottom]
           Ctl3D = False
@@ -265,6 +276,7 @@ object CompOptForm: TCompOptForm
           TabOrder = 1
           OnChange = edEntryChange
           OnKeyUp = edEntryKeyUp
+          ExplicitWidth = 435
         end
         object btnDelInval: TButton
           Tag = 4
@@ -317,10 +329,10 @@ object CompOptForm: TCompOptForm
     end
     object tabPrograms: TTabSheet
       Caption = 'Programs'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitWidth = 476
+      DesignSize = (
+        470
+        375)
       object lblProgramsText: TLabel
         Left = 24
         Top = 16
@@ -375,135 +387,159 @@ object CompOptForm: TCompOptForm
       end
       object btnBrowse2: TSpeedButton
         Tag = 2
-        Left = 419
+        Left = 409
         Top = 67
         Width = 23
         Height = 22
+        Anchors = [akTop, akRight]
         ImageIndex = 59
         ImageName = 'iconsnew-65'
         Images = dmMain.SVGImageListMenuStyle
         Flat = True
         OnClick = btnBrws1Click
+        ExplicitLeft = 419
       end
       object btnBrowse3: TSpeedButton
         Tag = 3
-        Left = 419
+        Left = 409
         Top = 112
         Width = 23
         Height = 22
+        Anchors = [akTop, akRight]
         ImageIndex = 59
         ImageName = 'iconsnew-65'
         Images = dmMain.SVGImageListMenuStyle
         Flat = True
         OnClick = btnBrws1Click
+        ExplicitLeft = 419
       end
       object btnBrowse4: TSpeedButton
         Tag = 4
-        Left = 419
+        Left = 409
         Top = 156
         Width = 23
         Height = 22
+        Anchors = [akTop, akRight]
         ImageIndex = 59
         ImageName = 'iconsnew-65'
         Images = dmMain.SVGImageListMenuStyle
         Flat = True
         OnClick = btnBrws1Click
+        ExplicitLeft = 419
       end
       object btnBrowse5: TSpeedButton
         Tag = 5
-        Left = 419
+        Left = 409
         Top = 200
         Width = 23
         Height = 22
+        Anchors = [akTop, akRight]
         ImageIndex = 59
         ImageName = 'iconsnew-65'
         Images = dmMain.SVGImageListMenuStyle
         Flat = True
         OnClick = btnBrws1Click
+        ExplicitLeft = 419
       end
       object btnBrowse6: TSpeedButton
         Tag = 6
-        Left = 419
+        Left = 409
         Top = 243
         Width = 23
         Height = 22
+        Anchors = [akTop, akRight]
         ImageIndex = 59
         ImageName = 'iconsnew-65'
         Images = dmMain.SVGImageListMenuStyle
         Flat = True
         OnClick = btnBrws1Click
+        ExplicitLeft = 419
       end
       object btnBrowse8: TSpeedButton
         Tag = 7
-        Left = 419
+        Left = 409
         Top = 288
         Width = 23
         Height = 22
+        Anchors = [akTop, akRight]
         ImageIndex = 59
         ImageName = 'iconsnew-65'
         Images = dmMain.SVGImageListMenuStyle
         Flat = True
         OnClick = btnBrws1Click
+        ExplicitLeft = 419
       end
       object GccEdit: TEdit
         Left = 80
         Top = 68
-        Width = 329
+        Width = 319
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 0
         OnChange = InterfaceChange
+        ExplicitWidth = 329
       end
       object GppEdit: TEdit
         Left = 80
         Top = 112
-        Width = 329
+        Width = 319
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 1
         OnChange = InterfaceChange
+        ExplicitWidth = 329
       end
       object MakeEdit: TEdit
         Left = 80
         Top = 156
-        Width = 329
+        Width = 319
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 2
         OnChange = InterfaceChange
+        ExplicitWidth = 329
       end
       object GdbEdit: TEdit
         Left = 80
         Top = 200
-        Width = 329
+        Width = 319
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 3
         OnChange = InterfaceChange
+        ExplicitWidth = 329
       end
       object WindresEdit: TEdit
         Left = 80
         Top = 244
-        Width = 329
+        Width = 319
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 4
         OnChange = InterfaceChange
+        ExplicitWidth = 329
       end
       object GprofEdit: TEdit
         Left = 80
         Top = 288
-        Width = 329
+        Width = 319
         Height = 21
+        Anchors = [akLeft, akTop, akRight]
         Ctl3D = False
         ParentCtl3D = False
         TabOrder = 5
         OnChange = InterfaceChange
+        ExplicitWidth = 329
       end
     end
   end
