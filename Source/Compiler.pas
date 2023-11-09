@@ -54,6 +54,7 @@ type
     fStartTime: cardinal;
     fShowOutputInfo: boolean;
     fCompilerSet: TdevCompilerSet;
+    fLineOutputSplitter: TStringList;
     procedure DoLogEntry(const msg: String);
     procedure DoOutput(const s1, s2, s3, s4: String);
     procedure DoResOutput(const s1, s2, s3, s4: String);
@@ -64,6 +65,7 @@ type
     procedure ProcessProgressForm(const Line: String);
     procedure EndProgressForm;
   public
+    Constructor Create;
     procedure BuildMakeFile;
     procedure CheckSyntax;
     procedure Compile;
@@ -120,6 +122,11 @@ implementation
 
 uses
   System.UITypes, MultiLangSupport, Macros, devExec, main, StrUtils, System.IOUtils;
+
+Constructor TCompiler.Create;
+begin
+  fLineOutputSplitter := TStringList.Create;
+end;
 
 procedure TCompiler.DoLogEntry(const msg: String);
 begin
@@ -234,7 +241,8 @@ begin
 
     // Only process source files
     RelativeName := ExtractRelativePath(fProject.FileName, fProject.Units[i].FileName);
-    if not (GetFileTyp(RelativeName) in [utcHead, utcppHead, utResSrc]) then begin
+    // +utOther (Bayagin fork)
+    if not (GetFileTyp(RelativeName) in [utcHead, utcppHead, utResSrc, utOther]) then begin
       if fProject.Options.ObjectOutput <> '' then begin
 
         // ofile = C:\MyProgram\obj\main.o
@@ -517,7 +525,7 @@ end;
 
 procedure TCompiler.GetCompileParams;
 var
-  I, val: integer;
+  Ioption, val: integer;
   option: TCompilerOption;
 begin
   // Force syntax checking when we have to
@@ -532,60 +540,79 @@ begin
   end;
 
   // Walk all options
-  for I := 0 to fCompilerSet.Options.Count - 1 do begin
-    option := PCompilerOption(fCompilerSet.Options[I])^;
+  for Ioption := 0 to fCompilerSet.Options.Count - 1 do
+  begin
+    option := PCompilerOption(fCompilerSet.Options[Ioption])^;
 
     // consider project specific options for the compiler, else global compiler options
-    if (Assigned(fProject) and (I < Length(fProject.Options.CompilerOptions))) or (not Assigned(fProject) and
-      (option.Value > 0)) then begin
-      if option.IsC then begin
-        if Assigned(option.Choices) then begin
+    if (Assigned(fProject) and (Ioption < Length(fProject.Options.CompilerOptions)))
+      or (not Assigned(fProject) and (option.Value > 0)) then
+    begin
+      if option.IsC then
+      begin
+        if Assigned(option.Choices) then
+        begin
           if Assigned(fProject) then
-            val := fProject.Options.CompilerOptions[I]
+            val := fProject.Options.CompilerOptions[Ioption]
           else
             val := option.Value;
           if (val > 0) and (val < option.Choices.Count) then
             fCompileParams := fCompileParams + ' ' + option.Setting +
               option.Choices.Values[option.Choices.Names[val]];
-        end else if (Assigned(fProject) and (fProject.Options.CompilerOptions[I] = 1)) or (not
-          Assigned(fProject)) then begin
+        end
+        else // no option.Choices
+        if (Assigned(fProject) and (fProject.Options.CompilerOptions[Ioption] = 1))
+          or (not Assigned(fProject)) then
+        begin
           fCompileParams := fCompileParams + ' ' + option.Setting;
         end;
-      end;
-      if option.IsCpp then begin
-        if Assigned(option.Choices) then begin
+      end;//option.IsC
+
+      if option.IsCpp then
+      begin
+        if Assigned(option.Choices) then
+        begin
           if Assigned(fProject) then
-            val := fProject.Options.CompilerOptions[I]
+            val := fProject.Options.CompilerOptions[Ioption]
           else
             val := option.Value;
           if (val > 0) and (val < option.Choices.Count) then
             fCppCompileParams := fCppCompileParams + ' ' + option.Setting +
               option.Choices.Values[option.Choices.Names[val]];
-        end else if (Assigned(fProject) and (fProject.Options.CompilerOptions[I] = 1)) or (not
-          Assigned(fProject)) then begin
+        end
+        else // no option.Choices
+        if (Assigned(fProject) and (fProject.Options.CompilerOptions[Ioption] = 1))
+          or (not Assigned(fProject)) then
+        begin
           fCppCompileParams := fCppCompileParams + ' ' + option.Setting;
         end;
-      end;
-       if (not option.IsC) AND (not option.IsCpp) AND (not option.IsLinker) then begin
+      end;//option.IsCpp
+
+      if (not option.IsC) AND (not option.IsCpp) AND (not option.IsLinker) then
+      begin
         if option.Setting='-j' then
         begin
-          if Assigned(option.Choices) then begin
+          if Assigned(option.Choices) then
+          begin
             if Assigned(fProject) then
-              val := fProject.Options.CompilerOptions[I]
+              val := fProject.Options.CompilerOptions[Ioption]
             else
               val := option.Value;
             if (val > 0) and (val < option.Choices.Count) then
               fMakeParams := fMakeParams + ' ' + option.Setting +
                 option.Choices.Values[option.Choices.Names[val]];
-          end else if (Assigned(fProject) and (fProject.Options.CompilerOptions[I] = 1)) or (not
-            Assigned(fProject)) then begin
-            fMakeParams := fMakeParams + ' ' + option.Setting + option.Choices.Values[option.Choices.Names[val]];
+          end
+          else // no option.Choices
+          if (Assigned(fProject) and (fProject.Options.CompilerOptions[Ioption] = 1))
+            or (not Assigned(fProject)) then
+          begin
+            fMakeParams := fMakeParams + ' ' + option.Setting;
           end;
-        end;
+        end;//option.Setting='-j'
       end;
 
     end;
-  end;
+  end;//for Ioption
 
   // Add custom commands inherited from Tools >> Compiler Options
   with fCompilerSet do begin
@@ -1009,18 +1036,18 @@ end;
 
 procedure TCompiler.OnLineOutput(Sender: TObject; const Line: String);
 var
-  List: TStringList;
+  TxtRow: String;
   I: integer;
 begin
-  DoLogEntry(Line);
+  ///DoLogEntry(Line);  not good when Line contains breaks
 
-  List := TStringList.Create;
-  List.Text := Line;
-  for I := 0 to List.Count - 1 do begin
-    ProcessOutput(List.Strings[I]);
-    ProcessProgressForm(List.Strings[I]);
+  fLineOutputSplitter.Text := Line;
+  for I := 0 to fLineOutputSplitter.Count - 1 do begin
+    TxtRow := fLineOutputSplitter.Strings[I];
+    ProcessOutput(TxtRow);
+    ProcessProgressForm(TxtRow);
+    DoLogEntry(TxtRow);
   end;
-  List.Free;
 end;
 
 procedure TCompiler.ProcessOutput(const line: String);
