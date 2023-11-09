@@ -367,7 +367,7 @@ var
 begin
   p.Char := Column;
   p.Line := Line;
-  q := TCustomSynEdit(Sender).BufferToDisplayPos(p);
+  q := TCustomSynEdit(Sender).BufferToDisplayPos(p);        //TODO what it does?
 
   // Convert to display coords
   MainForm.AddFindOutputItem(IntToStr(Line), IntToStr(Column), fCurFile, TCustomSynEdit(Sender).Lines[Line - 1],
@@ -501,6 +501,9 @@ begin
   fTempSynEdit.Parent := Self;
   fTempSynEdit.WantTabs := devEditor.UseTabs;
   fTempSynEdit.TabWidth := devEditor.TabSize;
+
+  grpOrigin.Top := grpWhere.Top;
+  grpOrigin.Left := grpWhere.Left;
 end;
 
 procedure TFindForm.FormShow(Sender: TObject);

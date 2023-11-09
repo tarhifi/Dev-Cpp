@@ -56,6 +56,7 @@ type
   private
     fOptions: TSynSearchOptions;
     fSearchEngine: TSynEditSearch;
+    fOriginalFontColor: TColor;
     fOriginalColor: TColor;
     fEditor: TSynEdit;
     procedure DoSearch;
@@ -87,21 +88,43 @@ begin
   end;
 end;
 
+function pref(pre, nam: String): String;
+begin
+  if nam[1] in [' ', '?', '@'] then
+    Result := pre + nam.Substring(2)
+  else
+    Result := pre + ' ' + nam;
+end;
+
 procedure TIncrementalForm.DoSearch;
 begin
 
   // Search forwards...
   if Editor.SearchReplace(Edit.Text, '', fOptions) = 0 then begin
 
-    // Nothing found? Start at top
+    // Nothing found? Start at EntireScope
     Include(fOptions, ssoEntireScope);
     if Editor.SearchReplace(Edit.Text, '', fOptions) = 0 then begin
-      Edit.Color := clRed;
-      MessageBeep(MB_OK);
-    end else
+      // still nothing: red signal
+      Edit.Font.Color := clRed;
       Edit.Color := fOriginalColor;
+      MessageBeep(MB_OK);
+       // color change is suppressed when in theme, so just hack the Caption
+      Self.Caption := pref('??', Self.Caption);
+    end
+    else
+    begin
+      // jump happened
+      Edit.Color := clYellow;
+      Edit.Font.Color := fOriginalFontColor;
+      Self.Caption := pref('@@', Self.Caption);
+    end;
   end else
+  begin
+    Edit.Font.Color := fOriginalFontColor;
     Edit.Color := fOriginalColor;
+    Self.Caption := pref('  ', Self.Caption);
+  end;
 end;
 
 procedure TIncrementalForm.EditChange(Sender: TObject);
@@ -115,8 +138,9 @@ begin
     // Search forward
     fOptions := [];
     DoSearch;
-  end else begin
-
+  end
+  else
+  begin
     // Remove previous find
     Editor.BlockBegin := Editor.BlockEnd;
   end;
@@ -169,7 +193,14 @@ end;
 procedure TIncrementalForm.FormShow(Sender: TObject);
 begin
   ActiveControl := Edit;
+  fOriginalFontColor := Edit.Font.Color;
   fOriginalColor := Edit.Color;
+
+  if Editor.SelAvail then
+  begin
+    if not Application.Terminated then
+      Edit.Text := Editor.SelText;
+  end;
 end;
 
 procedure TIncrementalForm.FormKeyPress(Sender: TObject; var Key: Char);

@@ -4,8 +4,8 @@ object FindForm: TFindForm
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Find Text'
-  ClientHeight = 330
-  ClientWidth = 330
+  ClientHeight = 339
+  ClientWidth = 353
   Color = clWindow
   Ctl3D = False
   Font.Charset = DEFAULT_CHARSET
@@ -23,13 +23,13 @@ object FindForm: TFindForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   DesignSize = (
-    330
-    330)
+    353
+    339)
   PixelsPerInch = 96
   TextHeight = 13
   object btnExecute: TButton
     Left = 8
-    Top = 300
+    Top = 309
     Width = 100
     Height = 25
     Anchors = [akLeft, akBottom]
@@ -38,23 +38,26 @@ object FindForm: TFindForm
     ModalResult = 1
     TabOrder = 0
     OnClick = btnExecuteClick
+    ExplicitTop = 300
   end
   object btnCancel: TButton
     Left = 222
-    Top = 300
+    Top = 309
     Width = 100
     Height = 25
     Anchors = [akLeft, akBottom]
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 1
     OnClick = btnCancelClick
+    ExplicitTop = 300
   end
   object FindTabs: TTabControl
     Left = 0
     Top = 0
-    Width = 330
-    Height = 295
+    Width = 353
+    Height = 305
     Align = alTop
     TabOrder = 2
     Tabs.Strings = (
@@ -121,10 +124,10 @@ object FindForm: TFindForm
       end
     end
     object grpDirection: TGroupBox
-      Left = 169
-      Top = 118
-      Width = 152
-      Height = 70
+      Left = 16
+      Top = 211
+      Width = 144
+      Height = 71
       Caption = '  Direction:  '
       TabOrder = 3
       object rbBackward: TRadioButton
@@ -181,8 +184,8 @@ object FindForm: TFindForm
       end
     end
     object grpScope: TGroupBox
-      Left = 8
-      Top = 212
+      Left = 169
+      Top = 211
       Width = 152
       Height = 70
       Caption = '  Scope:  '
@@ -207,15 +210,15 @@ object FindForm: TFindForm
       end
     end
     object grpOrigin: TGroupBox
-      Left = 169
-      Top = 212
+      Left = 75
+      Top = 157
       Width = 152
-      Height = 70
+      Height = 86
       Caption = '  Origin:  '
       TabOrder = 6
       object rbFromCursor: TRadioButton
         Left = 8
-        Top = 18
+        Top = 26
         Width = 121
         Height = 17
         Caption = 'From &cursor'
@@ -225,7 +228,7 @@ object FindForm: TFindForm
       end
       object rbEntireScope: TRadioButton
         Left = 8
-        Top = 42
+        Top = 58
         Width = 121
         Height = 17
         Caption = 'Entire &scope'
@@ -242,8 +245,8 @@ object FindForm: TFindForm
     end
   end
   object FindPopup: TPopupMenu
-    Left = 112
-    Top = 296
+    Left = 288
+    Top = 240
     object FindCut: TMenuItem
       Caption = 'Cut'
       ShortCut = 16472
