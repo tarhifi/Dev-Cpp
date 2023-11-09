@@ -1,9 +1,9 @@
 object DemoMainForm: TDemoMainForm
   Left = 287
   Top = 202
-  Width = 685
-  Height = 440
   Caption = 'SynEdit General Demo'
+  ClientHeight = 393
+  ClientWidth = 667
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,13 +22,18 @@ object DemoMainForm: TDemoMainForm
   object PageControl1: TPageControl
     Left = 0
     Top = 0
-    Width = 677
+    Width = 667
     Height = 113
     ActivePage = TabSheet2
     Align = alTop
     TabOrder = 0
+    ExplicitWidth = 677
     object tabFile: TTabSheet
       Caption = 'File'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object outFilename: TLabel
         Left = 88
         Top = 12
@@ -64,6 +69,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabDisplay: TTabSheet
       Caption = 'Display'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label12: TLabel
         Left = 107
         Top = 36
@@ -155,7 +164,6 @@ object DemoMainForm: TDemoMainForm
         Width = 81
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 3
         OnChange = cbxScrollBarsChange
         Items.Strings = (
@@ -170,7 +178,6 @@ object DemoMainForm: TDemoMainForm
         Width = 128
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 4
         OnChange = cbxColorChange
       end
@@ -180,7 +187,6 @@ object DemoMainForm: TDemoMainForm
         Width = 128
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 5
         OnChange = cbxForegroundChange
       end
@@ -190,7 +196,6 @@ object DemoMainForm: TDemoMainForm
         Width = 128
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 6
         OnChange = cbxBackgroundChange
       end
@@ -221,7 +226,6 @@ object DemoMainForm: TDemoMainForm
         Width = 128
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 9
         OnChange = cbxREColorChange
       end
@@ -237,6 +241,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabEdit: TTabSheet
       Caption = 'Edit'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label29: TLabel
         Left = 8
         Top = 61
@@ -286,6 +294,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabSearch: TTabSheet
       Caption = 'Search'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object lblSearchResult: TLabel
         Left = 268
         Top = 12
@@ -342,6 +354,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabCaret: TTabSheet
       Caption = 'Caret'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label7: TLabel
         Left = 8
         Top = 12
@@ -364,7 +380,6 @@ object DemoMainForm: TDemoMainForm
         Width = 97
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
         OnChange = cbxInsertCaretChange
         Items.Strings = (
@@ -379,7 +394,6 @@ object DemoMainForm: TDemoMainForm
         Width = 97
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 1
         OnChange = cbxOverwriteCaretChange
         Items.Strings = (
@@ -400,6 +414,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabGutter: TTabSheet
       Caption = 'Gutter'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label5: TLabel
         Left = 8
         Top = 12
@@ -446,7 +464,6 @@ object DemoMainForm: TDemoMainForm
         Width = 137
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 0
         OnChange = cbxGutterColorChange
       end
@@ -553,6 +570,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabBookmarks: TTabSheet
       Caption = 'Marks'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label4: TLabel
         Left = 144
         Top = 12
@@ -729,6 +750,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabUndo: TTabSheet
       Caption = 'Undo'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label11: TLabel
         Left = 8
         Top = 40
@@ -781,6 +806,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabHighlighter: TTabSheet
       Caption = 'Highlighter'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label1: TLabel
         Left = 8
         Top = 38
@@ -827,7 +856,6 @@ object DemoMainForm: TDemoMainForm
         Width = 105
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 0
         OnChange = cbxHighlighterSelectChange
       end
@@ -837,7 +865,6 @@ object DemoMainForm: TDemoMainForm
         Width = 105
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 1
         OnChange = cbxSettingsSelectChange
       end
@@ -847,7 +874,6 @@ object DemoMainForm: TDemoMainForm
         Width = 97
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 5
         OnChange = cbxAttrSelectChange
         Items.Strings = (
@@ -870,7 +896,6 @@ object DemoMainForm: TDemoMainForm
         Width = 121
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 6
         OnChange = cbxAttrBackgroundChange
       end
@@ -880,7 +905,6 @@ object DemoMainForm: TDemoMainForm
         Width = 121
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 7
         OnChange = cbxAttrForegroundChange
       end
@@ -1011,6 +1035,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabExporter: TTabSheet
       Caption = 'Export'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label27: TLabel
         Left = 8
         Top = 31
@@ -1025,7 +1053,6 @@ object DemoMainForm: TDemoMainForm
         Width = 136
         Height = 21
         Style = csDropDownList
-        ItemHeight = 0
         TabOrder = 1
         OnChange = cbxExporterSelectChange
       end
@@ -1058,6 +1085,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabInfo: TTabSheet
       Caption = 'Info'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label9: TLabel
         Left = 8
         Top = 12
@@ -1170,6 +1201,10 @@ object DemoMainForm: TDemoMainForm
     end
     object TabSheet1: TTabSheet
       Caption = 'Keyboard'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object KeyCmdList: TListView
         Left = 8
         Top = 2
@@ -1203,6 +1238,10 @@ object DemoMainForm: TDemoMainForm
     object TabSheet2: TTabSheet
       Caption = 'Completion'
       ImageIndex = 14
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label34: TLabel
         Left = 8
         Top = 45
@@ -1261,7 +1300,6 @@ object DemoMainForm: TDemoMainForm
         Width = 97
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 3
         OnChange = cbCompletionAttrChange
         Items.Strings = (
@@ -1276,13 +1314,16 @@ object DemoMainForm: TDemoMainForm
         Width = 121
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 4
         OnChange = cbxCompletionColorChange
       end
     end
     object tabEvents: TTabSheet
       Caption = 'Events'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object cbEnableEventLog: TCheckBox
         Left = 8
         Top = 11
@@ -1350,6 +1391,10 @@ object DemoMainForm: TDemoMainForm
     end
     object tabAbout: TTabSheet
       Caption = 'About'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object Label33: TLabel
         Left = 8
         Top = 7
@@ -1381,8 +1426,8 @@ object DemoMainForm: TDemoMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 387
-    Width = 677
+    Top = 374
+    Width = 667
     Height = 19
     Panels = <
       item
@@ -1400,13 +1445,14 @@ object DemoMainForm: TDemoMainForm
         Bevel = pbNone
         Width = 50
       end>
-    SimplePanel = False
+    ExplicitTop = 387
+    ExplicitWidth = 677
   end
   object SynEditor: TSynEdit
     Left = 0
     Top = 113
-    Width = 677
-    Height = 274
+    Width = 667
+    Height = 261
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -1428,6 +1474,14 @@ object DemoMainForm: TDemoMainForm
     OnMouseMove = SynEditorMouseMove
     OnMouseUp = SynEditorMouseUp
     OnStartDrag = SynEditorStartDrag
+    CodeFolding.GutterShapeSize = 11
+    CodeFolding.CollapsedLineColor = clGrayText
+    CodeFolding.FolderBarLinesColor = clGrayText
+    CodeFolding.IndentGuidesColor = clGray
+    CodeFolding.IndentGuides = True
+    CodeFolding.ShowCollapsedLine = False
+    CodeFolding.ShowHintMark = True
+    UseCodeFolding = False
     BookMarkOptions.BookmarkImages = ImageList1
     Gutter.Font.Charset = DEFAULT_CHARSET
     Gutter.Font.Color = clWindowText
@@ -1446,6 +1500,9 @@ object DemoMainForm: TDemoMainForm
     OnProcessUserCommand = SynEditorProcessUserCommand
     OnReplaceText = SynEditorReplaceText
     OnStatusChange = SynEditorStatusChange
+    FontSmoothing = fsmNone
+    ExplicitWidth = 677
+    ExplicitHeight = 274
     RemovedKeystrokes = <
       item
         Command = ecDeleteLastChar
@@ -1475,8 +1532,6 @@ object DemoMainForm: TDemoMainForm
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     Font.Style = []
-    MinFontSize = 0
-    MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly]
     Left = 72
     Top = 132
@@ -2114,58 +2169,94 @@ object DemoMainForm: TDemoMainForm
   end
   object SynHC11Syn1: TSynHC11Syn
     DefaultFilter = '68HC11 Assembler files (*.hc11,*.asm,*.asc)|*.HC11;*.ASM;*.ASC'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 72
     Top = 240
   end
   object SynADSP21xxSyn1: TSynADSP21xxSyn
     DefaultFilter = 'DSP files (*.dsp,*.inc)|*.DSP;*.INC'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 104
     Top = 240
   end
   object SynAWKSyn1: TSynAWKSyn
     DefaultFilter = 'AWK Script (*.awk)|*.awk'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 136
     Top = 240
   end
   object SynBaanSyn1: TSynBaanSyn
     DefaultFilter = 'Baan 4GL files (*.cln)|*.cln'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 168
     Top = 240
   end
   object SynCppSyn1: TSynCppSyn
     DefaultFilter = 'C++ files (*.cpp,*.h,*.hpp)|*.cpp;*.h;*.hpp'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 200
     Top = 240
   end
   object SynCacheSyn1: TSynCacheSyn
     DefaultFilter = 'Cache files (*.mac,*.inc,*.int)|*.mac;*.inc;*.int'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 232
     Top = 240
   end
   object SynCACSyn1: TSynCACSyn
     DefaultFilter = 'CA-Clipper files (*.prg, *.ch, *.inc)|*.prg;*.ch;*.inc'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 264
     Top = 240
   end
   object SynCssSyn1: TSynCssSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 296
     Top = 240
   end
   object SynDfmSyn1: TSynDfmSyn
     DefaultFilter = 'Delphi/C++ Builder Form Files (*.dfm)|*.dfm'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 328
     Top = 240
   end
   object SynFortranSyn1: TSynFortranSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 360
     Top = 240
   end
   object SynFoxproSyn1: TSynFoxproSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 392
     Top = 240
   end
   object SynGalaxySyn1: TSynGalaxySyn
     DefaultFilter = 'Galaxy files (*.gtv,*.galrep,*.txt)|*.gtv;*.galrep;*.txt'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     KeyWords.Strings = (
       '#END'
       '#GALAXY'
@@ -2230,57 +2321,89 @@ object DemoMainForm: TDemoMainForm
   end
   object SynDmlSyn1: TSynDmlSyn
     DefaultFilter = 'GEMBASE files (*.dml,*.gem)|*.DML;*.GEM'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 456
     Top = 240
   end
   object SynGeneralSyn1: TSynGeneralSyn
-    Comments = []
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     DetectPreprocessor = False
-    IdentifierChars = '_0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'
+    StringMultiLine = False
     Left = 520
     Top = 240
   end
   object SynHTMLSyn1: TSynHTMLSyn
     DefaultFilter = 'HTML Document (*.htm,*.html)|*.htm;*.html'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 552
     Top = 240
   end
   object SynIniSyn1: TSynIniSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 584
     Top = 240
   end
   object SynInnoSyn1: TSynInnoSyn
     DefaultFilter = 'Inno Setup Script files (*.iss)|*.iss'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 40
     Top = 272
   end
   object SynJavaSyn1: TSynJavaSyn
     DefaultFilter = 'Java files (*.java)|*.java'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 72
     Top = 272
   end
   object SynJScriptSyn1: TSynJScriptSyn
     DefaultFilter = 'Javascript files (*.js)|*.js'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 104
     Top = 272
   end
   object SynKixSyn1: TSynKixSyn
     DefaultFilter = 'Kix Scripts (*.kix)|*.kix'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 136
     Top = 272
   end
   object SynVBScriptSyn1: TSynVBScriptSyn
     DefaultFilter = 'VBScript files (*.vbs)|*.vbs'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 168
     Top = 272
   end
   object SynBatSyn1: TSynBatSyn
     DefaultFilter = 'MS-DOS Batch Files (*.bat)|*.bat'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 200
     Top = 272
   end
   object SynPerlSyn1: TSynPerlSyn
     DefaultFilter = 'Perl files (*.pl,*.pm,*.cgi)|*.pl;*.pm;*.cgi'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 232
     Top = 272
   end
@@ -2288,40 +2411,70 @@ object DemoMainForm: TDemoMainForm
     DefaultFilter = 
       'PHP files (*.php,*.php3,*.phtml,*.inc)|*.php;*.php3;*.phtml;*.in' +
       'c'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 264
     Top = 272
   end
   object SynProgressSyn1: TSynProgressSyn
     DefaultFilter = 'Progress Files (*.w,*.p,*.i)|*.w;*.p;*.i'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 296
     Top = 272
   end
   object SynPythonSyn1: TSynPythonSyn
     DefaultFilter = 'Python files (*.py)|*.py'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 328
     Top = 272
   end
   object SynSQLSyn1: TSynSQLSyn
     DefaultFilter = 'SQL files (*.sql)|*.sql'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     SQLDialect = sqlSybase
     Left = 360
     Top = 272
   end
   object SynSMLSyn1: TSynSMLSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 392
     Top = 272
   end
   object SynTclTkSyn1: TSynTclTkSyn
     DefaultFilter = 'Tcl/Tk files (*.tcl)|*.tcl'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
+    OptionsAttri.Background = clNone
+    OptionsAttri.Foreground = clNone
+    PathAttri.Background = clNone
+    PathAttri.Foreground = clNone
+    VariableAttri.Background = clNone
+    VariableAttri.Foreground = clNone
     Left = 424
     Top = 272
   end
   object SynVBSyn1: TSynVBSyn
     DefaultFilter = 'Visual Basic files (*.bas)|*.bas'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 456
     Top = 272
   end
   object SynAsmSyn1: TSynAsmSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 488
     Top = 272
   end
@@ -2331,46 +2484,76 @@ object DemoMainForm: TDemoMainForm
   end
   object SynModelicaSyn1: TSynModelicaSyn
     DefaultFilter = 'Modelica files (*.mo)|*.mo'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 520
     Top = 272
   end
   object SynM3Syn1: TSynM3Syn
     DefaultFilter = 'Modula-3 files (*.m3)|*.m3'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 552
     Top = 272
   end
   object SynGWScriptSyn1: TSynGWScriptSyn
     DefaultFilter = 'GW-TEL Script Files (*.gws)|*.gws'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 584
     Top = 272
   end
   object SynCPMSyn1: TSynCPMSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 40
     Top = 240
   end
   object SynIdlSyn1: TSynIdlSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 488
     Top = 240
   end
   object SynHP48Syn1: TSynHP48Syn
     DefaultFilter = 'HP48 Files (*.s,*.sou,*.a,*.hp)|*.s;*.sou;*.a;*.hp'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     BaseRange = rsRpl
     Left = 616
     Top = 240
   end
   object SynPasSyn1: TSynPasSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 616
     Top = 272
   end
   object SynSDDSyn1: TSynSDDSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 40
     Top = 304
   end
   object SynMsgSyn1: TSynMsgSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 72
     Top = 304
   end
   object SynUnrealSyn1: TSynUnrealSyn
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 104
     Top = 304
   end
@@ -2378,12 +2561,18 @@ object DemoMainForm: TDemoMainForm
     DefaultFilter = 
       'XML Document (*.xml,*.xsd,*.xsl,*.xslt,*.dtd)|*.xml;*.xsd;*.xsl;' +
       '*.xslt;*.dtd'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     WantBracesParsed = False
     Left = 136
     Top = 304
   end
   object SynSTSyn1: TSynSTSyn
     DefaultFilter = 'Pascal Files (*.pas,*.dpr,*.dpk,*.inc)|*.pas;*.dpr;*.dpk;*.inc'
+    Options.AutoDetectEnabled = False
+    Options.AutoDetectLineLimit = 0
+    Options.Visible = False
     Left = 168
     Top = 304
   end

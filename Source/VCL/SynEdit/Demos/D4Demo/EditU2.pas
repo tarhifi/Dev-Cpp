@@ -66,7 +66,8 @@ uses
   SynHighlighterGalaxy, SynHighlighterAWK, SynHighlighterModelica,
   SynHighlighterM3, SynHighlighterGWS, SynHighlighterXML,
   SynHighlighterUnreal, SynHighlighterMsg, SynHighlighterSDD,
-  SynHighlighterIDL, SynHighlighterCPM, SynHighlighterST;
+  SynHighlighterIDL, SynHighlighterCPM, SynHighlighterST, SynEditCodeFolding,
+  System.ImageList, Vcl.ImgList;
 
 type
   TDemoMainForm = class(TForm)
