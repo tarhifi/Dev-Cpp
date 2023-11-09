@@ -315,26 +315,55 @@ end;
 function TExceptionFrm.AddressInfo(Address: Cardinal): String;
 var
   I, iUnit: integer;
-  MapAddress: dword;
+  MapAddress, HInstOffs, c1, c2: Cardinal; //dword;
+  uent: TUnitEntry;
+  Lent, Lent2: TLineEntry;
   sUnit, sFunction, sLine: String;
+  db : PWideChar;
 begin
-  sUnit := '';
-  sFunction := '';
-  sLine := '';
-  iUnit := -1;
+  HInstOffs := hInstance + $1000;
+  if (Address < HInstOffs) then // FIXME ok: int overflow
+  begin
+    db := PWideChar('SKIP AddressInfo(' + IntToStr(Address) + ' hinst:' + IntToStr(HInstance));
+    OutputDebugString(@db);
+    Exit;
+  end;
+  sUnit := 'unit?';
+  sFunction := 'func?';
+  sLine := 'line?';
 
-  MapAddress := Address - (hInstance + $1000);
+  db := PWideChar('AddressInfo(' + IntToStr(Address) + ' hinst:' + IntToStr(HInstance));
+  OutputDebugString(db);
+  MapAddress := Address - HInstOffs;
   if MapAddress >= $FF000000 then // out of scope
     Exit;
 
   // find unit
-  for I := 0 to fUnits.Count - 1 do
-    if (MapAddress >= PUnitEntry(fUnits[I])^.Start) and (MapAddress <= PUnitEntry(fUnits[I])^.Start +
-      Cardinal(PUnitEntry(fUnits[I])^.Len)) then begin
-      iUnit := I;
-      sUnit := PUnitEntry(fUnits[I])^.Name;
+  for iUnit := 0 to fUnits.Count - 1 do
+  begin
+    uent := PUnitEntry(fUnits[iUnit])^;
+    c1 := uent.Start;
+    c2 := c1 + Cardinal(uent.Len);
+
+    if (MapAddress >= c1) and (MapAddress <= c2) then
+    begin
+      sUnit := uent.Name;
+
+      for I := 0 to fLines.Count - 2 do
+      begin
+        Lent := PLineEntry(fLines[I])^;
+        Lent2 := PLineEntry(fLines[I + 1])^;
+        if (integer(Lent.UnitIndex) = iUnit) then
+          if (MapAddress >= Lent.Address) and (MapAddress < Lent2.Address) then
+          begin
+            sLine := Lent.Line;
+            Break;
+          end;
+      end;
+
       Break;
     end;
+  end;
 
   // find function
   for I := 0 to fFuncs.Count - 2 do
@@ -343,15 +372,6 @@ begin
       Break;
     end;
 
-  // find line, if we found a unit
-  if (iUnit <> -1) then
-    for I := 0 to fLines.Count - 2 do
-      if (integer(PLineEntry(fLines[I])^.UnitIndex) = iUnit) then
-        if (MapAddress >= PLineEntry(fLines[I])^.Address) and (MapAddress < PLineEntry(fLines[I + 1])^.Address) then
-          begin
-          sLine := PLineEntry(fLines[I])^.Line;
-          Break;
-        end;
 
   if (sFunction <> '') and (sUnit <> '') and (sLine <> '') then // found all
     Result := Format('%8.8x (%8.8x): %s (%s - %s)'#13#10, [Address, MapAddress, sFunction, sUnit, sLine])
@@ -381,7 +401,11 @@ begin
   end;
   max := StackStop;
   repeat
-    result := result + AddressInfo(Cardinal(walker^));
+    try
+      result := result + AddressInfo(Cardinal(walker^));
+    except
+      break;
+    end;
     Inc(walker);
   until dword(walker) > max;
 
@@ -508,12 +532,12 @@ begin
 end;
 
 procedure TExceptionFrm.btnSendClick(Sender: TObject);
-var
-  Socket: TClientSocket;
-  I: integer;
+///var
+  ///Socket: TClientSocket;
+  ///I: integer;
   //	SocketResult: integer;
   //	Buffer: array[0..1024] of Char;
-  Cmd, EmailBody, EmailSubject: String;
+  ///Cmd, EmailBody, EmailSubject: String;
 begin
   {// Move focus to other button
   btnSend.Default := false;
