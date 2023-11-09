@@ -7368,7 +7368,7 @@ begin
     vCaretRow := DisplayY;
     if ForceToMiddle then
     begin
-      if vCaretRow < (TopLine - 1) then
+      if vCaretRow < (TopLine - 0) then  // fix  github.com/Embarcadero/Dev-Cpp/issues/270
       begin
         TmpMiddle := LinesInWindow div 2;
         if vCaretRow - TmpMiddle < 0 then
