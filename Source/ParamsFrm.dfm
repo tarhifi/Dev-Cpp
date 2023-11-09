@@ -74,6 +74,7 @@ object ParamsForm: TParamsForm
     Top = 138
     Width = 75
     Height = 25
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     NumGlyphs = 2

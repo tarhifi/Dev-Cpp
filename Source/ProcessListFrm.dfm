@@ -40,6 +40,7 @@ object ProcessListForm: TProcessListForm
     Top = 64
     Width = 75
     Height = 25
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     NumGlyphs = 2

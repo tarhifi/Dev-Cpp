@@ -36,6 +36,7 @@ object ProjectOptionsFrm: TProjectOptionsFrm
     Top = 350
     Width = 85
     Height = 25
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     NumGlyphs = 2
@@ -231,10 +232,6 @@ object ProjectOptionsFrm: TProjectOptionsFrm
     end
     object tabFiles: TTabSheet
       Caption = 'Files'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lvFiles: TTreeView
         Left = 8
         Top = 8
@@ -413,10 +410,6 @@ object ProjectOptionsFrm: TProjectOptionsFrm
     end
     object tabCompOpts: TTabSheet
       Caption = 'Options'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblAdditions: TLabel
         Left = 6
         Top = 6
@@ -491,10 +484,6 @@ object ProjectOptionsFrm: TProjectOptionsFrm
     end
     object tabFilesDir: TTabSheet
       Caption = 'Directories'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object SubTabs: TTabControl
         Left = 0
         Top = 0
@@ -607,10 +596,6 @@ object ProjectOptionsFrm: TProjectOptionsFrm
     end
     object tabOutputDir: TTabSheet
       Caption = 'Output'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object lblOverrideOutput: TLabel
         Left = 10
         Top = 234
@@ -722,10 +707,6 @@ object ProjectOptionsFrm: TProjectOptionsFrm
     end
     object tabMakefile: TTabSheet
       Caption = 'Makefile'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object btnCustomMakeBrowse: TSpeedButton
         Left = 490
         Top = 54

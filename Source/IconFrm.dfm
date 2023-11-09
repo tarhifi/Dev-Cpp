@@ -47,6 +47,7 @@ object IconForm: TIconForm
     Width = 87
     Height = 24
     Anchors = [akLeft, akBottom]
+    Cancel = True
     Caption = '&Cancel'
     Images = dmMain.SVGImageListMenuStyle
     ModalResult = 2

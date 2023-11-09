@@ -3,8 +3,8 @@ object EditorOptForm: TEditorOptForm
   Top = 375
   BorderStyle = bsDialog
   Caption = 'Editor Options'
-  ClientHeight = 492
-  ClientWidth = 484
+  ClientHeight = 498
+  ClientWidth = 493
   Color = clWindow
   Ctl3D = False
   Font.Charset = DEFAULT_CHARSET
@@ -17,8 +17,8 @@ object EditorOptForm: TEditorOptForm
   OnClose = FormClose
   OnCreate = FormCreate
   DesignSize = (
-    484
-    492)
+    493
+    498)
   PixelsPerInch = 96
   TextHeight = 15
   object PagesMain: TPageControl
@@ -345,9 +345,9 @@ object EditorOptForm: TEditorOptForm
           Caption = 'Tab Size:'
         end
         object seTabSize: TSpinEdit
-          Left = 176
+          Left = 173
           Top = 51
-          Width = 57
+          Width = 61
           Height = 24
           MaxValue = 64
           MinValue = 0
@@ -619,7 +619,13 @@ object EditorOptForm: TEditorOptForm
         Font.Style = []
         Font.Quality = fqClearTypeNatural
         TabOrder = 3
+        CodeFolding.GutterShapeSize = 11
+        CodeFolding.CollapsedLineColor = clGrayText
+        CodeFolding.FolderBarLinesColor = clGrayText
+        CodeFolding.IndentGuidesColor = clGray
+        CodeFolding.IndentGuides = True
         CodeFolding.ShowCollapsedLine = True
+        CodeFolding.ShowHintMark = True
         UseCodeFolding = False
         Gutter.BorderStyle = gbsNone
         Gutter.DigitCount = 2
@@ -630,23 +636,6 @@ object EditorOptForm: TEditorOptForm
         Gutter.Font.Style = []
         Gutter.ShowLineNumbers = True
         Gutter.GradientEndColor = clBackground
-        Gutter.Bands = <
-          item
-            Kind = gbkMarks
-            Visible = True
-            Width = 13
-          end
-          item
-            Kind = gbkLineNumbers
-          end
-          item
-            Kind = gbkFold
-          end
-          item
-            Kind = gbkMargin
-            Visible = True
-            Width = 3
-          end>
         HideSelection = True
         Highlighter = cpp
         Lines.Strings = (
@@ -675,6 +664,7 @@ object EditorOptForm: TEditorOptForm
         OnGutterClick = OnGutterClick
         OnSpecialLineColors = CppEditSpecialLineColors
         OnStatusChange = cppEditStatusChange
+        FontSmoothing = fsmNone
         RemovedKeystrokes = <
           item
             Command = ecLineBreak
@@ -867,7 +857,13 @@ object EditorOptForm: TEditorOptForm
             Font.Quality = fqClearTypeNatural
             TabOrder = 2
             TabStop = False
+            CodeFolding.GutterShapeSize = 11
+            CodeFolding.CollapsedLineColor = clGrayText
+            CodeFolding.FolderBarLinesColor = clGrayText
+            CodeFolding.IndentGuidesColor = clGray
+            CodeFolding.IndentGuides = True
             CodeFolding.ShowCollapsedLine = True
+            CodeFolding.ShowHintMark = True
             UseCodeFolding = False
             Gutter.BorderStyle = gbsNone
             Gutter.Font.Charset = DEFAULT_CHARSET
@@ -876,28 +872,12 @@ object EditorOptForm: TEditorOptForm
             Gutter.Font.Name = 'Courier New'
             Gutter.Font.Style = []
             Gutter.ShowLineNumbers = True
-            Gutter.Bands = <
-              item
-                Kind = gbkMarks
-                Visible = True
-                Width = 13
-              end
-              item
-                Kind = gbkLineNumbers
-              end
-              item
-                Kind = gbkFold
-              end
-              item
-                Kind = gbkMargin
-                Visible = True
-                Width = 3
-              end>
             Highlighter = cpp
             Options = [eoAutoIndent, eoHideShowScrollbars, eoKeepCaretX, eoSmartTabs, eoTabIndent, eoTrimTrailingSpaces]
             TabWidth = 4
             WantTabs = True
             OnStatusChange = CodeInsStatusChange
+            FontSmoothing = fsmNone
             RemovedKeystrokes = <
               item
                 Command = ecContextHelp
@@ -954,7 +934,13 @@ object EditorOptForm: TEditorOptForm
             Font.Quality = fqClearTypeNatural
             TabOrder = 1
             TabStop = False
+            CodeFolding.GutterShapeSize = 11
+            CodeFolding.CollapsedLineColor = clGrayText
+            CodeFolding.FolderBarLinesColor = clGrayText
+            CodeFolding.IndentGuidesColor = clGray
+            CodeFolding.IndentGuides = True
             CodeFolding.ShowCollapsedLine = True
+            CodeFolding.ShowHintMark = True
             UseCodeFolding = False
             Gutter.BorderStyle = gbsNone
             Gutter.Font.Charset = DEFAULT_CHARSET
@@ -963,28 +949,12 @@ object EditorOptForm: TEditorOptForm
             Gutter.Font.Name = 'Courier New'
             Gutter.Font.Style = []
             Gutter.ShowLineNumbers = True
-            Gutter.Bands = <
-              item
-                Kind = gbkMarks
-                Visible = True
-                Width = 13
-              end
-              item
-                Kind = gbkLineNumbers
-              end
-              item
-                Kind = gbkFold
-              end
-              item
-                Kind = gbkMargin
-                Visible = True
-                Width = 3
-              end>
             Highlighter = cpp
             Options = [eoAutoIndent, eoHideShowScrollbars, eoKeepCaretX, eoSmartTabs, eoTabIndent, eoTrimTrailingSpaces]
             TabWidth = 4
             WantTabs = True
             OnStatusChange = CodeInsStatusChange
+            FontSmoothing = fsmNone
             RemovedKeystrokes = <
               item
                 Command = ecContextHelp
@@ -1280,8 +1250,8 @@ object EditorOptForm: TEditorOptForm
     end
   end
   object btnOk: TBitBtn
-    Left = 210
-    Top = 460
+    Left = 212
+    Top = 461
     Width = 85
     Height = 25
     Anchors = [akRight, akBottom]
@@ -1292,11 +1262,12 @@ object EditorOptForm: TEditorOptForm
     OnClick = btnOkClick
   end
   object btnCancel: TBitBtn
-    Left = 300
-    Top = 460
+    Left = 302
+    Top = 461
     Width = 85
     Height = 25
     Anchors = [akRight, akBottom]
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     NumGlyphs = 2
@@ -1304,8 +1275,8 @@ object EditorOptForm: TEditorOptForm
     OnClick = btnCancelClick
   end
   object btnHelp: TBitBtn
-    Left = 390
-    Top = 460
+    Left = 392
+    Top = 461
     Width = 85
     Height = 25
     Anchors = [akRight, akBottom]

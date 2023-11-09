@@ -47,6 +47,7 @@ object WindowListForm: TWindowListForm
       Width = 91
       Height = 25
       Anchors = [akRight, akBottom]
+      Cancel = True
       Caption = '&Cancel'
       ModalResult = 2
       NumGlyphs = 2

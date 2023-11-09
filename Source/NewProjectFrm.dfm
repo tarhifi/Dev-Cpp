@@ -63,6 +63,7 @@ object NewProjectForm: TNewProjectForm
     Width = 83
     Height = 24
     Anchors = [akRight, akBottom]
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     NumGlyphs = 2

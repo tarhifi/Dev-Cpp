@@ -171,6 +171,7 @@ object NewClassForm: TNewClassForm
     Top = 308
     Width = 75
     Height = 25
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 10

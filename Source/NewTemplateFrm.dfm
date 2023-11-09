@@ -155,7 +155,6 @@ object NewTemplateForm: TNewTemplateForm
         Top = 28
         Width = 321
         Height = 213
-        ItemHeight = 13
         TabOrder = 0
       end
     end
@@ -246,6 +245,7 @@ object NewTemplateForm: TNewTemplateForm
     Top = 290
     Width = 75
     Height = 25
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 2

@@ -127,6 +127,7 @@ object ToolEditForm: TToolEditForm
     Width = 85
     Height = 24
     Anchors = [akLeft, akBottom]
+    Cancel = True
     Caption = '&Cancel'
     Images = dmMain.SVGImageListMenuStyle
     ModalResult = 2

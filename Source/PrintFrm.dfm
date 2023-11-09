@@ -23,6 +23,7 @@ object PrintForm: TPrintForm
     Top = 164
     Width = 75
     Height = 24
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     NumGlyphs = 2

@@ -51,6 +51,7 @@ object EnviroForm: TEnviroForm
     Width = 85
     Height = 25
     Anchors = [akRight, akBottom]
+    Cancel = True
     Caption = 'Cancel'
     Images = dmMain.SVGImageListMenuStyle
     ModalResult = 2
@@ -573,7 +574,6 @@ object EnviroForm: TEnviroForm
         Height = 317
         Anchors = [akLeft, akTop, akRight, akBottom]
         Ctl3D = False
-        ItemHeight = 15
         ParentCtl3D = False
         TabOrder = 0
       end

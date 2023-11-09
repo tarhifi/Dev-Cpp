@@ -58,6 +58,7 @@ object ClangFormatterOptionsForm: TClangFormatterOptionsForm
     Width = 85
     Height = 25
     Anchors = [akLeft, akBottom]
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     NumGlyphs = 2
@@ -87,7 +88,13 @@ object ClangFormatterOptionsForm: TClangFormatterOptionsForm
     Font.Style = []
     Font.Quality = fqClearTypeNatural
     TabOrder = 0
+    CodeFolding.GutterShapeSize = 11
+    CodeFolding.CollapsedLineColor = clGrayText
+    CodeFolding.FolderBarLinesColor = clGrayText
+    CodeFolding.IndentGuidesColor = clGray
+    CodeFolding.IndentGuides = True
     CodeFolding.ShowCollapsedLine = True
+    CodeFolding.ShowHintMark = True
     UseCodeFolding = False
     Gutter.Font.Charset = DEFAULT_CHARSET
     Gutter.Font.Color = clWindowText
@@ -105,6 +112,7 @@ object ClangFormatterOptionsForm: TClangFormatterOptionsForm
       #9'}'
       '}')
     ReadOnly = True
+    FontSmoothing = fsmNone
   end
   object grpOptions: TGroupBox
     Left = 8

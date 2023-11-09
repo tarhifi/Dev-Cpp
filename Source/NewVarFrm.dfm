@@ -71,7 +71,7 @@ object NewVarForm: TNewVarForm
   end
   object btnCreate: TButton
     Left = 142
-    Top = 344
+    Top = 338
     Width = 75
     Height = 25
     Caption = 'Create'
@@ -81,9 +81,10 @@ object NewVarForm: TNewVarForm
   end
   object btnCancel: TButton
     Left = 227
-    Top = 344
+    Top = 338
     Width = 75
     Height = 25
+    Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
     TabOrder = 5

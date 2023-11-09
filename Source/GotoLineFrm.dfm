@@ -54,6 +54,7 @@ object GotoLineForm: TGotoLineForm
     Top = 45
     Width = 75
     Height = 25
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     TabOrder = 2
