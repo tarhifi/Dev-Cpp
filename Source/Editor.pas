@@ -220,6 +220,7 @@ type
     procedure InitCompletion;
     procedure ShowCompletion;
     procedure DestroyCompletion;
+    procedure RepaintBreakpoints(Line: integer);
     property PreviousEditors: TList read fPreviousEditors;
     property FileName: String read fFileName write SetFileName;
     property InProject: boolean read fInProject write fInProject;
@@ -239,7 +240,8 @@ implementation
 uses
   main, project, MultiLangSupport, devcfg, utils, Vcl.Themes,
   DataFrm, GotoLineFrm, Macros, debugreader, IncrementalFrm,
-  CodeCompletionForm, SynEditMiscClasses, CharUtils, Vcl.Printers, SynEditPrintTypes;
+  CodeCompletionForm, SynEditMiscClasses, CharUtils, Vcl.Printers, SynEditPrintTypes,
+  WideStrUtils;
 
 { TCloseTabSheet }
 constructor TCloseTabSheet.Create(AOwner:TComponent);
@@ -344,7 +346,9 @@ end;
 
 function IsStrUTF8(const Text: AnsiString): boolean;
 begin
-  result := (Text <> '') and (UTF8Decode(Text) <> Text);
+  //result := (Text <> '') and (UTF8Decode(Text) <> Text);
+  //result := (Text <> '') and (UTF8ToString(Text) <> Text);
+  result := (Text <> '') and IsUTF8String(Text);
 end;
 
 function UTF8FileBOM(const FileName: string): boolean;
@@ -375,12 +379,14 @@ var
  PreviousByte: byte;
  i: integer;
  YesSequences, NoSequences: integer;
-
+ Bit8Chars: integer;
 begin
+   Result := False;
    if not FileExists(FileName) then
      Exit;
    YesSequences := 0;
    NoSequences := 0;
+   Bit8Chars := 0;
    Stream := TMemoryStream.Create;
    try
      Stream.LoadFromFile(FileName);
@@ -391,28 +397,55 @@ begin
        BytesRead := Stream.Read(ArrayBuff, High(ArrayBuff) + 1);
            {Do the work on the bytes in the buffer}
        if BytesRead > 1 then
+       begin
+         for i := 1 to BytesRead-1 do
          begin
-           for i := 1 to BytesRead-1 do
+           // specific approach
+           if (ArrayBuff[i] = $e2) and (ArrayBuff[i+1] in [$94, $95]) then
+           begin
+              { An age old OEM775 pseudographic (used in DOS) produces e2.9x.xx
+                triplets when properly converted to UTF-8  }
+             Result := true;
+             Exit;
+           end;
+           if (ArrayBuff[i] = $c3) and (ArrayBuff[i+1]
+              in [$a4, $84, $b6, $96, $b5, $95, $bc, $9c,  // umlauts
+              $89, $a9])  // Eacute
+           then
+           begin
+              { umlauted characters -> c3.xx byte pairs
+                when converted to UTF-8 }
+             Result := true;
+             Exit;
+           end;
+			//TODO: may add c5.xx etc for scandic etc 
+
+           // generic approach, 
+		   // has knowingly crashed into bad utf8 code point with Bit8 ...
+           if ArrayBuff[i] > $80 then
+             inc(Bit8Chars);
+           PreviousByte := ArrayBuff[i-1];
+           if ((ArrayBuff[i] and $c0) = $80) then
+           begin
+             if ((PreviousByte and $c0) = $c0) then
              begin
-               PreviousByte := ArrayBuff[i-1];
-               if ((ArrayBuff[i] and $c0) = $80) then
-                 begin
-                   if ((PreviousByte and $c0) = $c0) then
-                     begin
-                       inc(YesSequences)
-                     end
-                   else
-                     begin
-                       if ((PreviousByte and $80) = $0) then
-                         inc(NoSequences);
-                     end;
-                 end;
+               inc(YesSequences)
+             end
+             else
+             begin
+               if ((PreviousByte and $80) = $0) then
+                 inc(NoSequences);
              end;
+           end;
          end;
+       end;
      until (BytesRead < (High(ArrayBuff) + 1));
-//Below, >= makes ASCII files = UTF-8, which is no problem.
+     if (Bit8Chars > 0) and (YesSequences = 0) and (NoSequences = 0) then
+       result := false
+     else
+//Below, >= makes ASCII files = UTF-8, which is no problem when all below $80
 //Simple > would catch only UTF-8;
-     Result := (YesSequences >= NoSequences);
+     Result := YesSequences >= NoSequences;
 
    finally
      Stream.Free;
@@ -500,9 +533,11 @@ begin
       begin
         AEncoding := TEncoding.UTF8;
        //TSynEditStringListEx(fText.Lines).SetEncoding(AEncoding);
-      end;
+      end
+      else
+        AEncoding := TEncoding.Default;
     end;
-    fText.Lines.LoadFromFile(FileName, AEncoding);
+    fText.Lines.LoadFromFile(FileName, AEncoding);      //FIXME Must solve Ansi E' problem
 
     fNew := False;
 
@@ -638,17 +673,28 @@ begin
   fText.InvalidateLine(Line);
 end;
 
+procedure TEditor.RepaintBreakpoints(Line: integer);
+begin
+  fText.InvalidateGutterLine(Line);
+  fText.InvalidateLine(Line);
+end;
+
+// called by SynEdit.PaintLines, SynEdit.TCustomSynEdit.Paint->Editor.TDebugGutter.AfterPaint->TEditor.DebugAfterPaint
 function TEditor.HasBreakPoint(Line: integer): integer;
 var
   I: integer;
+  bp: PBreakPoint;
 begin
   result := -1;
   for I := 0 to MainForm.Debugger.BreakPointList.Count - 1 do
-    if integer(PBreakPoint(MainForm.Debugger.BreakPointList.Items[I])^.editor) = integer(self) then
-      if PBreakPoint(MainForm.Debugger.BreakPointList.Items[I])^.line = Line then begin
+  begin
+    bp := PBreakPoint(MainForm.Debugger.BreakPointList.Items[I]);
+    if integer(bp^.editor) = integer(self) then
+      if (bp^.line = Line) and (bp^.gdbAt = '') then begin
         Result := I;
         break;
       end;
+  end;
 end;
 
 procedure TEditor.EditorSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
@@ -1083,6 +1129,8 @@ function TEditor.UpdateEncoding(const FileName: string; AEncoding: TEncoding = n
 var
   LLines: TSynEditStringListEx;
   I: Integer;
+  tmp: String;
+  yess: boolean;
 begin
   Result := AEncoding;
   LLines := TSynEditStringListEx(fText.Lines);
@@ -1102,16 +1150,27 @@ begin
     Exit;
 
   for I := 0 to LLines.Count-1 do
-    if IsStrUTF8(LLines[i]) then
+  begin
+    tmp := LLines[i];
+    yess := IsUTF8String(tmp); // IsStrUTF8
+    if (yess) then
     //if _IsUnicodeStringMappableToAnsi(LLines[i]) then
+    {
+    Mingi jama on E' juures, kood arvab et selle tõttu on tegemist UTF-8ga,
+    aga krässib siis "invalid code point" otsa. Vist on põhjus selles et
+    System.WideStrUtils.DetectUTF8Encoding on jama.
+    }
+    begin
+      if (fEncodingCorrection = sceAuto)
+          or (MessageDlg(Format(Lang[ID_MSG_FILESAVEENCODING], [FileName]),
+                              mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
       begin
-        if (fEncodingCorrection = sceAuto)
-            or (MessageDlg(Format(Lang[ID_MSG_FILESAVEENCODING], [FileName]),
-                                mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
-          LLines.SetEncoding(TEncoding.UTF8);
-          Result := TEncoding.UTF8;
+        LLines.SetEncoding(TEncoding.UTF8);
+        Result := TEncoding.UTF8;
         Break;
       end;
+    end;
+  end;
 end;
 
 procedure TEditor.SetFileName(const value: String);
