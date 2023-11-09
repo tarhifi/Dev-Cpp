@@ -31,10 +31,11 @@ type
     TSource,
     TDisplayBegin, TDisplayEnd,
     TDisplayExpression,
+    TBreakpointFeedback, TBreakpointsInvalid,
     TFrameSourceFile, TFrameSourceBegin, TFrameSourceLine, TFrameFunctionName, TFrameWhere,
     TFrameArgs,
     TFrameBegin, TFrameEnd,
-    TErrorBegin, TErrorEnd,
+    TErrorBegin, TErrorEnd, TError,
     TArrayBegin, TArrayEnd,
     TElt, TEltRep, TEltRepEnd,
     TExit,
@@ -56,6 +57,8 @@ type
   TBreakPoint = record
     line: integer;
     editor: TEditor;
+    gdbNumber: integer;
+    gdbAt: String;
   end;
 
   PTrace = ^TTrace;
@@ -81,7 +84,7 @@ type
     fBreakpointList: TList;
     fWatchVarList: TList; // contains all parents
     fDebugView: TTreeView;
-    fIndex: integer;
+    fIndex: integer; // a position in fOutput
     fBreakPointLine: integer;
     fBreakPointFile: String;
     fOutput: String;
@@ -124,7 +127,7 @@ type
     procedure SkipToAnnotation; // skips until it finds #26#26 (GDB annotation for interfaces)
     function FindAnnotation(Annotation: TAnnotateType): boolean; // Finds the given annotation, returns false on EOF
     function GetNextAnnotation: TAnnotateType; // Returns the next annotation
-    function GetLastAnnotation(const text: TBytes; curpos, len: integer): TAnnotateType;
+    function GetLastAnnotation(var text: TBytes; curpos, len: integer): TAnnotateType;
     // Returns the last annotation in given string
     function PeekNextAnnotation: TAnnotateType;
     // Returns the next annotation, but does not modify current scanning positions
@@ -135,6 +138,8 @@ type
     // skips until enter sequence, skips enter sequences, copies until next enter sequence
     function GetRemainingLine: String; // copies until enter sequence
     function GetAnnotation(const s: String): TAnnotateType; // converts string to TAnnotateType
+    procedure HandleBreakpointCorrections;
+    procedure HandleBreakpointInvalidations;
   protected
     procedure Execute; override;
   public
@@ -183,7 +188,10 @@ begin
     MainForm.Debugger.OnEvalReady(fEvalValue);
 
   // Delete unimportant stuff to reduce clutter
-  fOutput := StringReplace(fOutput, #26, '->', [rfReplaceAll]);
+  fOutput := StringReplace(fOutput, #26#26, '@', [rfReplaceAll]);
+  fOutput := StringReplace(fOutput, #26, '@', [rfReplaceAll]);
+  fOutput := StringReplace(fOutput, #13#10#13#10, #13#10, [rfReplaceAll]);
+  //fOutput := StringReplace(fOutput, #26#26, '@', [rfReplaceAll]);
   MainForm.DebugOutput.Lines.Add(fOutput);
 
   // Some part of the CPU form has been updated
@@ -292,9 +300,10 @@ begin
   Result := '';
 
   // Return part of line still ahead of us
-  while not CharInSet(fOutput[fIndex], [#13, #10, #0]) do begin
-    Result := Result + fOutput[fIndex];
-    Inc(fIndex);
+  while not CharInSet(fOutput[fIndex], [#13, #10, #0]) do
+  begin
+      Result := Result + fOutput[fIndex];
+      Inc(fIndex);
   end;
 end;
 
@@ -311,7 +320,8 @@ begin
     Exit;
 
   // Skip ONE enter sequence (CRLF, CR, LF, etc.)
-  if (fOutput[fIndex] = #13) and (fOutput[fIndex + 1] = #10) then // DOS
+  if (fOutput[fIndex] = #13) and (Length(fOutput) > 1)
+  and (fOutput[fIndex + 1] = #10) then // DOS
     Inc(fIndex, 2)
   else if fOutput[fIndex] = #13 then // UNIX
     Inc(fIndex)
@@ -329,13 +339,20 @@ begin
   // Walk up to an enter sequence
   while not CharInSet(fOutput[fIndex], [#13, #10, #0]) do
     Inc(fIndex);
-
+  if fOutput[fIndex] = #0 then
+    Exit;
   // Skip enter sequences (CRLF, CR, LF, etc.)
-  while CharInSet(fOutput[fIndex], [#13, #10, #0]) do
+  while CharInSet(fOutput[fIndex], [#13, #10, #$1A]) do
     Inc(fIndex);
-
+  if fOutput[fIndex] = #$1A then  // next annotoation starts
+    Exit;
   // Return next line
   Result := GetRemainingLine;
+
+{OutputDebugString(PChar('GetNextFilledLine fOutput.length= ' + IntToStr(Length(fOutput))
+     + ' fIndex= ' + IntToStr(fIndex) + ' Result:' + Result
+    ) );  }
+
 end;
 
 function TDebugReader.PeekNextAnnotation: TAnnotateType;
@@ -347,12 +364,15 @@ begin
   fIndex := IndexBackup;
 end;
 
-function TDebugReader.GetLastAnnotation(const text: TBytes; curpos, len: integer): TAnnotateType;
+function TDebugReader.GetLastAnnotation(var text: TBytes; curpos, len: integer): TAnnotateType;
 var
   s: String;
 begin
+  Dec(curpos, 1 - Low(text));  // BytesRead > LastIndex in zero-based array
+  //db := PWideChar('GetLastAnnotation(' + IntToStr(cardinal(Addr(text))) + ' curpos:' + IntToStr(curpos));
+  //OutputDebugString(db);
   // Walk back until end of #26's
-  while (curpos > 0) and (text[curpos] <> 26) do
+  while (curpos > 0) and (text[curpos] <> 26) do // FIXME  range check error
     Dec(curpos);
 
   Inc(curpos);
@@ -365,6 +385,7 @@ begin
   end;
 
   Result := GetAnnotation(s);
+  //OutputDebugString(PCHAR('GetLastAnnotation() = ' + s));
 end;
 
 function TDebugReader.GetNextAnnotation: TAnnotateType;
@@ -387,25 +408,40 @@ begin
     result := TPrompt
   else if SameStr(s, 'post-prompt') then begin
     result := TPostPrompt;
+    // shudnt dig so diip hier, but ok...
+    if Length(fOutput) > 66 then
+    begin
+      IndexBackup := fIndex;
+      t := GetNextFilledLine;
+      fIndex := IndexBackup;
 
-    IndexBackup := fIndex;
-    t := GetNextFilledLine;
-    fIndex := IndexBackup;
+      if Assigned(fRegisters) then // Hack fix to catch register dump
+      begin
+        if StartsStr('rax ', t) or StartsStr('eax ', t) then
+          result := TInfoReg;
+      end
+      else
+      if Assigned(fDisassembly) then  // Another hack to catch assembler
+      begin
+        if StartsStr('Dump of assembler code for function ', t) then
+          result := TInfoAsm;
+      end;
 
-    // Hack fix to catch register dump
-    if Assigned(fRegisters) then
-      if StartsStr('rax ', t) or StartsStr('eax ', t) then
-        result := TInfoReg;
+      if ContainsText(t, 'Breakpoint') then   // Breakpoint / breakpoint / breakpoints
+      begin
+        // t is like: 'Breakpoint 2 at 0x402eca: file CompareDir.cpp, line 161.'
+        result := TBreakpointFeedback;
 
-    // Another hack to catch assembler
-    if Assigned(fDisassembly) then
-      if StartsStr('Dump of assembler code for function ', t) then
-        result := TInfoAsm;
-
+      end;
+    end;
   end else if SameStr(s, 'error-begin') then
     result := TErrorBegin
   else if SameStr(s, 'error-end') then
     result := TErrorEnd
+  else if SameStr(s, 'error') then
+    result := TError
+  else if SameStr(s, 'breakpoints-invalid') then
+    result := TBreakpointsInvalid
   else if SameStr(s, 'display-begin') then
     result := TDisplayBegin
   else if SameStr(s, 'display-expression') then
@@ -550,7 +586,7 @@ begin
   // Collect all data, add formatting in between
   repeat
     NextAnnotation := GetNextAnnotation;
-    NextLine := GetNextLine;
+    NextLine := GetNextLine;    //TODO success each time?
     case NextAnnotation of
 
       // Change indent if { or } is found
@@ -787,6 +823,13 @@ var
   WatchVar: PWatchVar;
 begin
   s := GetNextLine; // error text
+
+  if StartsStr('No breakpoint at "', s) then
+  begin
+    // No breakpoint at "CompareDir.cpp":189.
+    MainForm.Debugger.HandleBreakpointFeedback(s);
+  end
+  else
   if StartsStr('No symbol "', s) then begin
     Tail := Pos('"', s);
     Head := RPos('"', s);
@@ -841,6 +884,36 @@ begin
   end;
 end;
 
+procedure TDebugReader.HandleBreakpointCorrections;
+var
+  s1, s2: String;
+begin
+  s1 := GetNextFilledLine;
+  if StartsText('Note: breakpoint', s1) then
+  begin // gdb complains about multiple breaks at the same line/frame
+    s2 := GetNextFilledLine;
+    // reverse the order of sentences, less trouble later
+    if StartsText('Breakpoint ', s2) then
+      s1 := s2 + ' | ' + s1;
+  end;
+
+  MainForm.Debugger.HandleBreakpointFeedback(s1);
+end;
+
+procedure TDebugReader.HandleBreakpointInvalidations;
+var
+  s1: String; num: integer;
+begin
+  s1 := Trim(GetNextFilledLine);
+  if s1 > '' then
+  begin
+    num := StrToIntDef(s1, -1);
+    if num > 0 then
+      MainForm.Debugger.HandleBreakpointFeedback('Deleted breakpoints ' + s1);
+  end;
+
+end;
+
 procedure TDebugReader.HandleSource;
 var
   s: String;
@@ -872,6 +945,7 @@ begin
   doupdatecpuwindow := true;
 end;
 
+/// uses fOutput
 procedure TDebugReader.ProcessDebugOutput;
 var
   NextAnnotation: TAnnotateType;
@@ -890,7 +964,7 @@ begin
     doreceivedsignal := false;
     doupdatecpuwindow := false;
     doreceivedsfwarning := false;
-
+      //FIXME: code contains hardcoded Compiler specific text
     // Global checks
     if Pos('warning: Source file is more recent than executable.', fOutput) > 0 then
       doreceivedsfwarning := true;
@@ -913,10 +987,18 @@ begin
           HandleRegisters;
         TErrorBegin:
           HandleError;
+        TErrorEnd:
+          HandleError;
+        TError:
+          HandleError;
         TDisplayBegin:
           HandleDisplay;
         TSource:
-          HandleSource
+          HandleSource;
+        TBreakpointFeedback:
+          HandleBreakpointCorrections;
+        TBreakpointsInvalid:
+          HandleBreakpointInvalidations;
             //else
       //	break;
       end;
@@ -942,27 +1024,44 @@ begin
   while not Terminated do begin
 
     // Add chunklen bytes to length, and set chunklen extra bytes to zero
-    SetLength(tmp, totalbytesread + chunklen);
-    FillChar(tmp[totalbytesread], chunklen, 0);
+    SetLength(tmp, totalbytesread + chunklen + 1); // reserve 1 byte for #0 terminator
+    FillChar(tmp[totalbytesread], chunklen + 1, 0);
 
     // ReadFile returns when there's something to read
-    if not ReadFile(fPipeRead, (@tmp[totalbytesread])^, chunklen, bytesread, nil) or (bytesread = 0) then
+    if not ReadFile(             // Winapi.Windows
+        fPipeRead,               // hFile:  THandle;
+        (@tmp[totalbytesread])^, // var Buffer;
+        chunklen,                // nNumberOfBytesToRead: DWORD;
+        bytesread,               // var lpNumberOfBytesRead: DWORD;
+        nil)                     // lpOverlapped: POverlapped
+      or (bytesread = 0)
+    then
       break;
 
     Inc(totalbytesread, bytesread);
 
     if not Terminated then begin
 
-      // Assume fragments don't end nicely with TErrorBegin or TPrompt
-      fOutput := TEncoding.Default.GetString(tmp);
-      if GetLastAnnotation(Tmp, totalbytesread, totalbytesread + chunklen) in [TErrorBegin, TPrompt] then begin
-        fOutput := TEncoding.Default.GetString(tmp);
-        ProcessDebugOutput;
+      fOutput := 'X'; //fixed GetLastAnnotation() to bypass short fOutput
+      fIndex := 1;
 
-        // Reset storage
+      // delay handling until 'error' or 'prompt' appears, to have complete messages
+      if GetLastAnnotation(Tmp, totalbytesread, totalbytesread + chunklen)
+        in [         TPrompt]   ////TErrorEnd, TError,
+        then
+      begin
+        fOutput := TEncoding.Default.GetString(tmp);
+        fIndex := 1;
+
+        ProcessDebugOutput;  // uses fOutput, fIndex
+
+        // Reset buffers
         totalbytesread := 0;
+        fOutput := '!';
+        fIndex := 1;
       end;
-    end;
+
+    end;// while not Terminated
   end;
 
 end;
